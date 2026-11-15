@@ -139,9 +139,12 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.platform.LocalView
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarMotionTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
+import com.euthopiar.ui.theme.rememberWindowDimensions
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.Dispatchers
@@ -281,7 +284,7 @@ fun OnboardingScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 8.dp, bottom = 14.dp)
-                    .padding(horizontal = 20.dp),
+                    .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false),
                 contentAlignment = Alignment.Center,
             ) {
                 Box(modifier = Modifier.widthIn(max = 480.dp)) {
@@ -296,7 +299,7 @@ fun OnboardingScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
+                    .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false),
                 contentAlignment = Alignment.Center,
             ) {
                 Box(modifier = Modifier.widthIn(max = 480.dp)) {
@@ -463,6 +466,108 @@ private fun OnboardingPage1Welcome(
     onGoogleSignIn: () -> Unit = {},
     onGetStarted: () -> Unit,
 ) {
+    val windowDims = rememberWindowDimensions()
+    if (windowDims.isWideViewport) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(28.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
+                contentAlignment = Alignment.Center,
+            ) {
+                OnboardingPosterMarquee(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(24.dp)),
+                    topRowItems = topRowPosters,
+                    bottomRowItems = bottomRowPosters,
+                    isLoading = isLoading,
+                    isActive = isActive,
+                    compact = windowDims.isCompactHeight,
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .verticalScroll(rememberScrollState())
+                    .padding(vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Column(
+                    modifier = Modifier
+                        .widthIn(max = 460.dp)
+                        .fillMaxWidth(),
+                ) {
+                    Text(
+                        text = "WELCOME",
+                        style = TextStyle(
+                            fontFamily = AppFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 11.sp,
+                            lineHeight = 14.sp,
+                            letterSpacing = 0.10.em,
+                            color = OnboardingTokens.TextMuted45,
+                        ),
+                    )
+
+                    Spacer(modifier = Modifier.height(if (windowDims.isCompactHeight) 8.dp else 12.dp))
+
+                    Text(
+                        text = "Your private\ncinema.",
+                        style = TextStyle(
+                            fontFamily = AppFontFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = if (windowDims.isCompactHeight) 32.sp else 40.sp,
+                            lineHeight = if (windowDims.isCompactHeight) 34.sp else 40.sp,
+                            letterSpacing = (-0.03).em,
+                            color = Color.White,
+                        ),
+                        modifier = Modifier.semantics { heading() },
+                    )
+
+                    Spacer(modifier = Modifier.height(if (windowDims.isCompactHeight) 8.dp else 12.dp))
+
+                    Text(
+                        text = "Movies, series, and anime from all your sources, with automatic fallback when one goes down.",
+                        style = TextStyle(
+                            fontFamily = AppFontFamily,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp,
+                            color = OnboardingTokens.TextMuted55,
+                        ),
+                        modifier = Modifier.widthIn(max = 320.dp),
+                    )
+
+                    Spacer(modifier = Modifier.height(if (windowDims.isCompactHeight) 18.dp else 26.dp))
+
+                    OnboardingGoogleSignInButton(
+                        isLoading = isSigningIn,
+                        onClick = onGoogleSignIn,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    OnboardingWhitePillButton(
+                        text = "Continue as Guest",
+                        onClick = onGetStarted,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        }
+        return
+    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -484,7 +589,7 @@ private fun OnboardingPage1Welcome(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth()
-                .padding(horizontal = 20.dp),
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false),
             contentAlignment = Alignment.BottomCenter,
         ) {
             Column(
@@ -641,7 +746,7 @@ private fun OnboardingPage2Profile(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(
@@ -1369,7 +1474,8 @@ private fun OnboardingPage2Profile(
                     ),
                 )
                 .navigationBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false)
+                .padding(vertical = 16.dp),
             contentAlignment = Alignment.Center,
         ) {
             Box(modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth()) {
@@ -1484,7 +1590,7 @@ private fun OnboardingPage3Customize(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = 20.dp),
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Column(
@@ -1935,7 +2041,8 @@ private fun OnboardingPage3Customize(
                     ),
                 )
                 .navigationBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 16.dp),
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false)
+                .padding(vertical = 16.dp),
             contentAlignment = Alignment.Center,
         ) {
             Box(modifier = Modifier.widthIn(max = 480.dp).fillMaxWidth()) {

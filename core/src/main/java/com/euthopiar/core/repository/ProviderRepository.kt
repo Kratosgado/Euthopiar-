@@ -97,7 +97,7 @@ open class ProviderRepository(
             val deferred = targetDefs.map { def ->
                 async(Dispatchers.IO) {
                     try {
-                        withTimeoutOrNull(6000L) {
+                        withTimeoutOrNull(15_000L) {
                             val url = def.buildCatalogUrl()
                             val response = com.euthopiar.core.js.network.httpRequestRaw("GET", url, emptyMap(), "", followRedirects = true)
                             if (response.status in 200..299 && response.body.isNotBlank()) {
@@ -164,7 +164,7 @@ open class ProviderRepository(
             val stremioDeferreds = searchDefs.map { def ->
                 async(Dispatchers.IO) {
                     try {
-                        withTimeoutOrNull(6000L) {
+                        withTimeoutOrNull(15_000L) {
                             val url = def.buildCatalogUrl(search = query)
                             val response = com.euthopiar.core.js.network.httpRequestRaw("GET", url, emptyMap(), "", followRedirects = true)
                             if (response.status in 200..299 && response.body.isNotBlank()) {
@@ -219,15 +219,15 @@ open class ProviderRepository(
             }
             MediaType.TV_SERIES -> {
                 if (declaredTypes.isEmpty()) "series"
-                else listOf("series", "tv").firstOrNull { it in declaredTypes } ?: "series"
+                else listOf("series", "tv", "other").firstOrNull { it in declaredTypes } ?: "series"
             }
             MediaType.MOVIE -> {
                 if (declaredTypes.isEmpty()) "movie"
-                else listOf("movie", "movies").firstOrNull { it in declaredTypes } ?: "movie"
+                else listOf("movie", "movies", "other").firstOrNull { it in declaredTypes } ?: "movie"
             }
             MediaType.ANIME -> {
                 if (declaredTypes.isEmpty()) "anime"
-                else listOf("anime", "series", "tv", "movie").firstOrNull { it in declaredTypes } ?: "anime"
+                else listOf("anime", "series", "tv", "movie", "other").firstOrNull { it in declaredTypes } ?: "anime"
             }
         }
     }
@@ -708,7 +708,7 @@ open class ProviderRepository(
         val streams = mutableListOf<StreamSource>()
         val subtitles = mutableListOf<SubtitleTrack>()
         try {
-            withTimeoutOrNull(20_000L) {
+            withTimeoutOrNull(30_000L) {
                 getStreamFlow(
                     episodeData = episodeData,
                     providerName = providerName,

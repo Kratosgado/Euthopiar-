@@ -61,9 +61,11 @@ import com.euthopiar.R
 import com.euthopiar.data.common.DonationConfig
 import com.euthopiar.ui.settings.components.settingsPressable
 import com.euthopiar.ui.theme.Accent
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarGlassTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -191,10 +193,11 @@ fun DonationReminderDialog(
                     translationY = cardTranslationY
                     alpha = cardAlpha
                 }
-                .widthIn(max = 380.dp)
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false)
+                .widthIn(max = Dimens.maxDialogWidth)
                 .fillMaxWidth()
                 .heightIn(max = maxDialogHeight)
-                .padding(horizontal = 20.dp, vertical = 16.dp)
+                .padding(vertical = 16.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,

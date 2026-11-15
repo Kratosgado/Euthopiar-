@@ -48,6 +48,7 @@ import com.euthopiar.ui.theme.ShapeM
 import com.euthopiar.ui.theme.SurfaceLow
 import com.euthopiar.ui.theme.TextPrimary
 import com.euthopiar.ui.theme.pressable
+import com.euthopiar.ui.theme.rememberAdaptiveHorizontalPadding
 import com.euthopiar.ui.theme.rememberWindowDimensions
 
 /**
@@ -94,7 +95,10 @@ fun ContinueWatchingRow(
 
         LazyRow(
             state = continueWatchingState,
-            contentPadding = PaddingValues(horizontal = windowDimensions.horizontalMargin),
+            contentPadding = rememberAdaptiveHorizontalPadding(
+                baseStart = windowDimensions.horizontalMargin,
+                baseEnd = windowDimensions.horizontalMargin
+            ),
             horizontalArrangement = Arrangement.spacedBy(horizontalGap),
             modifier = Modifier.fillMaxWidth()
         ) {

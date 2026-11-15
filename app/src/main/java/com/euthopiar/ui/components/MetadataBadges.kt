@@ -472,7 +472,8 @@ fun ReleaseStatusBadge(
         formatShortReleaseDate(releaseDate)
     }
 
-    val isUsingHaze = hazeState != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val uiBlurEnabled = com.euthopiar.ui.theme.LocalUiBlurEnabled.current
+    val isUsingHaze = uiBlurEnabled && hazeState != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
     val surfaceModifier = modifier
         .clip(pillShape)
         .then(

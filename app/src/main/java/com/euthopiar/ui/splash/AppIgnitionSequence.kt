@@ -11,9 +11,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.displayCutout
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,8 +43,10 @@ import androidx.compose.ui.unit.sp
 import com.euthopiar.ui.theme.AppFontFamily
 import com.euthopiar.ui.theme.AppTypography
 import com.euthopiar.ui.theme.Background
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.rememberWindowDimensions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -68,9 +74,17 @@ fun AppIgnitionSequence(
     val isAmoled = LocalAmoledMode.current
     val density = LocalDensity.current
 
+    val windowDims = rememberWindowDimensions()
+    val layoutDirection = LocalLayoutDirection.current
+    val cutoutStart = WindowInsets.displayCutout.asPaddingValues().calculateLeftPadding(layoutDirection)
+    val railFallbackStart = if (windowDims.useSideNavigationRail) {
+        if (windowDims.isCompactHeight) Dimens.navRailWidthCompact + 12.dp else Dimens.navRailWidthTablet + 12.dp
+    } else {
+        0.dp
+    }
     val statusBarTopPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val statusBarTopPx = with(density) { statusBarTopPadding.toPx() }
-    val targetLeftX = with(density) { 16.dp.toPx() }
+    val targetLeftX = with(density) { (16.dp + maxOf(cutoutStart, railFallbackStart)).toPx() }
     val headerHeightPx = with(density) { 56.dp.toPx() }
 
     val destinationMode by AppLaunchCoordinator.destinationMode.collectAsState()

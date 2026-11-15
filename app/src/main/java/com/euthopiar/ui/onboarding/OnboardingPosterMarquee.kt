@@ -236,6 +236,7 @@ fun OnboardingPosterMarquee(
     bottomRowItems: List<ShowcasePosterItem> = ShowcaseRowBottom,
     isLoading: Boolean = false,
     isActive: Boolean = true,
+    compact: Boolean = false,
 ) {
     val context = LocalContext.current
     val isAmoled = LocalAmoledMode.current
@@ -275,11 +276,11 @@ fun OnboardingPosterMarquee(
 
     val shouldAnimate = isActive && isAppInForeground && !reduceMotion && !isBatterySaver && !isLowEnd
 
-    val cardWidth = 96.dp
-    val cardHeight = 144.dp
-    val tileGap = 10.dp
-    val rowGap = 12.dp
-    val row2Shift = 48.dp
+    val cardWidth = if (compact) 76.dp else 96.dp
+    val cardHeight = if (compact) 114.dp else 144.dp
+    val tileGap = if (compact) 8.dp else 10.dp
+    val rowGap = if (compact) 10.dp else 12.dp
+    val row2Shift = if (compact) 38.dp else 48.dp
 
     val row1Items = remember(topRowItems) {
         val base = if (topRowItems.isNotEmpty()) topRowItems else ShowcaseRowTop

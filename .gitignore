@@ -13,6 +13,9 @@
 .externalNativeBuild
 .cxx
 local.properties
+keystore.properties
+*.jks
+*.keystore
 */build
 *.png
 *.jpg
@@ -33,10 +36,20 @@ cinemaos_line_*.json
 dist_apk/
 release_dist/
 scratch/
+tools/
+scripts/
+docs/
 .agent-context/
+.agents/
+.cursorrules
+AI_RULES.md
+GEMINI.md
+CLAUDE.md
+TV_MIGRATION_BLUEPRINT.md
 .kotlin/
 test_eups_repo/
 *.apk
+*.aab
 *.zip
 *.log
 scrapers_dump.json
@@ -53,5 +66,3 @@ Refrence Nuviou/
 Refrence Nuviou/**
 Refrence Nuviou/NuvioMobile/
 Refrence Nuviou/NuvioMobile
-AI_RULES.md
-.agents/skills/euthopiar-pipeline/

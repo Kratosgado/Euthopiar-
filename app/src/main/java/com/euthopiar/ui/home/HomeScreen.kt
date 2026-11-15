@@ -95,6 +95,7 @@ import com.euthopiar.data.update.UpdateCheckState
 import kotlinx.coroutines.flow.first
 import com.euthopiar.ui.navigation.ObserveScrollForNavbar
 import com.euthopiar.ui.theme.Accent
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.AppTypography
 import com.euthopiar.ui.theme.SurfaceMid
@@ -707,12 +708,13 @@ fun HomeScreen(
                             }
 
                             // Bottom Spacer for Navigation Bar clearance (dynamic system insets)
-                            val bottomSpacerHeight = if (windowDimensions.isPhone) {
-                                Dimens.navBarHeight + navBarBottom + Dimens.spacing16
-                            } else {
-                                navBarBottom + Dimens.spacing24
-                            }
                             item(key = "home_bottom_spacer", contentType = "spacer") {
+                                val navLayout = com.euthopiar.ui.theme.LocalNavigationLayout.current
+                                val bottomSpacerHeight = if (navLayout.hasBottomNav) {
+                                    Dimens.navBarHeight + navBarBottom + Dimens.spacing16
+                                } else {
+                                    navBarBottom + Dimens.spacing24
+                                }
                                 Spacer(modifier = Modifier.height(bottomSpacerHeight))
                             }
                         }
@@ -747,12 +749,16 @@ fun HomeScreen(
                 hasUpdateAvailable = updateState is UpdateCheckState.UpdateAvailable,
                 onUpdateBadgeClick = { showUpdateDialog = true }
             )
-            OfflineBanner()
-            HomeUpdateBanner(
-                hazeState = if (isPreviewActive) null else homeHazeState,
-                onOpenUpdatePopup = { _, _ -> showUpdateDialog = true },
-                onDismiss = { updateManager.dismissBannerForSession() }
-            )
+            Box(modifier = Modifier.adaptiveHorizontalSafePadding()) {
+                OfflineBanner()
+            }
+            Box(modifier = Modifier.adaptiveHorizontalSafePadding()) {
+                HomeUpdateBanner(
+                    hazeState = if (isPreviewActive) null else homeHazeState,
+                    onOpenUpdatePopup = { _, _ -> showUpdateDialog = true },
+                    onDismiss = { updateManager.dismissBannerForSession() }
+                )
+            }
         }
 
     // Long-Press Quick Actions Host (sits on top of blurred hazeSource content)

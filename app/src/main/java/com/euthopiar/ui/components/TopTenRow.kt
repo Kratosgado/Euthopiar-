@@ -63,6 +63,7 @@ import coil3.request.ImageRequest
 import coil3.request.SuccessResult
 import coil3.toBitmap
 import com.euthopiar.core.model.MediaItem
+import com.euthopiar.ui.theme.rememberAdaptiveHorizontalPadding
 import com.euthopiar.data.preferences.SectionLabelStyle
 import com.euthopiar.data.preferences.Top10Style
 import com.euthopiar.ui.theme.Accent
@@ -210,7 +211,10 @@ fun TopTenRow(
 
         LazyRow(
             state = topTenRowState,
-            contentPadding = PaddingValues(horizontal = windowDimensions.horizontalMargin),
+            contentPadding = rememberAdaptiveHorizontalPadding(
+                baseStart = windowDimensions.horizontalMargin,
+                baseEnd = windowDimensions.horizontalMargin
+            ),
             horizontalArrangement = Arrangement.spacedBy(horizontalGap),
             modifier = Modifier.fillMaxWidth()
         ) {

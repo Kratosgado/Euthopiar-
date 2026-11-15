@@ -76,9 +76,13 @@ import com.euthopiar.ui.library.components.LibraryProgressBar
 import com.euthopiar.ui.library.components.SelectionIndicator
 import com.euthopiar.ui.library.sanitizeTitle
 import com.euthopiar.ui.theme.AppFontFamily
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarGlassTokens
+import com.euthopiar.ui.theme.LocalNavigationLayout
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.LocalWindowDimensions
 import com.euthopiar.ui.theme.pressable
+import com.euthopiar.ui.theme.rememberCenteredContentPadding
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.delay
 import java.util.Locale
@@ -216,9 +220,16 @@ fun DownloadsLedgerTab(
                 }
         }
 
+        val windowDimensions = LocalWindowDimensions.current
+        val navLayout = LocalNavigationLayout.current
         LazyColumn(
             state = listState,
-            contentPadding = PaddingValues(bottom = 110.dp),
+            contentPadding = rememberCenteredContentPadding(
+                maxContentWidth = Dimens.maxWideContentWidth,
+                baseStart = (windowDimensions.horizontalMargin - 16.dp).coerceAtLeast(0.dp),
+                baseEnd = (windowDimensions.horizontalMargin - 16.dp).coerceAtLeast(0.dp),
+                bottom = navLayout.recommendedBottomContentPadding
+            ),
             modifier = modifier.fillMaxSize()
         ) {
             // 1. Storage Hero Section
@@ -627,7 +638,10 @@ private fun StaggeredDownloadingRow(
             val reason = item.failureReason?.takeIf { it.isNotBlank() } ?: "Paused"
             "$reason · $pct%$sizePart"
         }
-        DownloadState.FAILED -> "Failed · Tap to retry"
+        DownloadState.FAILED -> {
+            val reason = item.failureReason?.takeIf { it.isNotBlank() }
+            if (reason != null) "Failed: $reason" else "Failed · Tap Retry"
+        }
         else -> "Ready"
     }
 
@@ -705,7 +719,7 @@ private fun StaggeredDownloadingRow(
                     Text(
                         text = statusText,
                         style = LibraryTypography.metadata11,
-                        maxLines = 1,
+                        maxLines = if (item.state == DownloadState.FAILED) 2 else 1,
                         overflow = TextOverflow.Ellipsis
                     )
 

@@ -25,10 +25,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import com.euthopiar.ui.settings.components.settingsPressable
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarGlassTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
+import com.euthopiar.ui.theme.rememberWindowDimensions
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -114,17 +119,19 @@ fun NoStreamingEngineDialog(
         )
 
         // Modal Dialog Card
+        val windowDims = rememberWindowDimensions()
         Box(
             modifier = Modifier
+                .adaptiveHorizontalSafePadding(baseStart = 24.dp, baseEnd = 24.dp, includeRailClearance = false)
+                .widthIn(max = 390.dp)
+                .fillMaxWidth()
+                .heightIn(max = windowDims.dialogMaxHeight())
                 .graphicsLayer {
                     scaleX = cardScale
                     scaleY = cardScale
                     translationY = cardTranslationY
                     alpha = cardAlpha
                 }
-                .widthIn(max = 390.dp)
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -151,6 +158,7 @@ fun NoStreamingEngineDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .padding(horizontal = 24.dp, vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.LocalUiBlurEnabled
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -153,10 +155,11 @@ fun Modifier.onboardingGlassSurface(
     customFill: Color = OnboardingTokens.GlassFill,
     fallbackFill: Color = OnboardingTokens.GlassFallbackFill,
     borderAlpha: Float = 0.16f,
-): Modifier {
-    val canBlur = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && hazeState != null && !isAmoled
+): Modifier = composed {
+    val uiBlurEnabled = LocalUiBlurEnabled.current
+    val canBlur = uiBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && hazeState != null
 
-    return this
+    this
         .clip(shape)
         .then(
             if (canBlur) {

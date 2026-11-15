@@ -49,9 +49,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.euthopiar.core.model.EpisodeItem
 import com.euthopiar.ui.theme.AppFontFamily
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarGlassTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -87,6 +89,7 @@ fun SeasonSheet(
     val haptic = LocalHapticFeedback.current
     val configuration = LocalConfiguration.current
     val isAmoled = LocalAmoledMode.current
+    val uiBlurEnabled = com.euthopiar.ui.theme.LocalUiBlurEnabled.current
     val density = LocalDensity.current
 
     val sheetProgress = remember { Animatable(0f) }
@@ -165,6 +168,8 @@ fun SeasonSheet(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .adaptiveHorizontalSafePadding(includeRailClearance = false)
+                .widthIn(max = Dimens.maxSheetWidth)
                 .fillMaxWidth()
                 .heightIn(max = maxSheetHeight)
                 .onGloballyPositioned { coordinates ->
@@ -209,7 +214,7 @@ fun SeasonSheet(
                 )
                 .clip(sheetShape)
                 .then(
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && hazeState != null) {
+                    if (uiBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && hazeState != null) {
                         Modifier.hazeEffect(state = hazeState) {
                             blurRadius = EuthopiarGlassTokens.BlurRadius
                             tints = listOf(HazeTint(sheetFill))

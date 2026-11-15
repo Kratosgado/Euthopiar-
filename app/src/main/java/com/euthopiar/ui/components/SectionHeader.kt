@@ -53,6 +53,7 @@ import com.euthopiar.ui.theme.LocalReduceMotion
 import com.euthopiar.ui.theme.ShapeS
 import com.euthopiar.ui.theme.TextPrimary
 import com.euthopiar.ui.theme.TextSecondary
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 import com.euthopiar.ui.theme.pressable
 import com.euthopiar.ui.theme.rememberWindowDimensions
 
@@ -92,7 +93,10 @@ fun SectionHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = windowDimensions.horizontalMargin)
+            .adaptiveHorizontalSafePadding(
+                baseStart = windowDimensions.horizontalMargin,
+                baseEnd = windowDimensions.horizontalMargin
+            )
             .padding(top = topSpacing, bottom = bottomSpacing),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -334,7 +338,11 @@ fun LegacySectionHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = windowDimensions.horizontalMargin, vertical = Dimens.spacing8),
+            .adaptiveHorizontalSafePadding(
+                baseStart = windowDimensions.horizontalMargin,
+                baseEnd = windowDimensions.horizontalMargin
+            )
+            .padding(vertical = Dimens.spacing8),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

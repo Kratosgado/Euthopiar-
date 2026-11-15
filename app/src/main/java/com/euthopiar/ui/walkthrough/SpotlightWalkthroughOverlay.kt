@@ -35,14 +35,19 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
+import com.euthopiar.ui.theme.rememberWindowDimensions
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -359,32 +364,41 @@ fun SpotlightWalkthroughOverlay(
         }
 
         if (cardData != null) {
+            val windowDims = rememberWindowDimensions()
             val isCutoutNearBottom = (target?.bounds?.top ?: (screenHeightPx / 2f)) > (screenHeightPx * 0.45f)
             val cardShape = RoundedCornerShape(24.dp)
             val cardBg = if (isAmoled) Color(0xF605070A) else Color(0xF40D111A)
 
             // Safe insets to respect punch holes, camera notches, and dynamic islands
             val statusBarInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-            val topSafePadding = maxOf(64.dp, statusBarInset + 20.dp)
+            val topSafePadding = if (windowDims.isCompactHeight) {
+                maxOf(16.dp, statusBarInset + 8.dp)
+            } else {
+                maxOf(64.dp, statusBarInset + 20.dp)
+            }
             val navBarInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-            val bottomSafePadding = maxOf(24.dp, navBarInset + 16.dp)
+            val bottomSafePadding = if (windowDims.isCompactHeight) {
+                maxOf(16.dp, navBarInset + 8.dp)
+            } else {
+                maxOf(24.dp, navBarInset + 16.dp)
+            }
 
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .zIndex(10f)
+                    .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false)
                     .padding(
-                        top = if (isCutoutNearBottom) topSafePadding else 20.dp,
-                        bottom = if (isCutoutNearBottom) 24.dp else bottomSafePadding,
-                        start = 20.dp,
-                        end = 20.dp
+                        top = if (isCutoutNearBottom) topSafePadding else 16.dp,
+                        bottom = if (isCutoutNearBottom) 16.dp else bottomSafePadding
                     ),
                 contentAlignment = if (isCutoutNearBottom) Alignment.TopCenter else Alignment.BottomCenter
             ) {
                 Box(
                     modifier = Modifier
-                        .widthIn(max = 390.dp)
+                        .widthIn(max = if (windowDims.isWideViewport) 440.dp else 390.dp)
                         .fillMaxWidth()
+                        .heightIn(max = windowDims.dialogMaxHeight(verticalMargin = 48.dp))
                         .clip(cardShape)
                         .then(
                             if (hazeState != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -429,7 +443,9 @@ fun SpotlightWalkthroughOverlay(
                         label = "walkthroughCardContent"
                     ) { data ->
                         Column(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .verticalScroll(rememberScrollState()),
                             horizontalAlignment = Alignment.Start
                         ) {
                             // Header Row: Step Pill + Skip Tour Action

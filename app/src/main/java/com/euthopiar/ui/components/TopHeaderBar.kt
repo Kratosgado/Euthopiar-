@@ -55,6 +55,7 @@ import com.euthopiar.ui.theme.HairlineWidth
 import com.euthopiar.ui.theme.Outline
 import com.euthopiar.ui.theme.ShapeFull
 import com.euthopiar.ui.theme.TextPrimary
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 import com.euthopiar.ui.theme.pressable
 import com.euthopiar.ui.theme.rememberWindowDimensions
 
@@ -97,9 +98,10 @@ fun TopHeaderBar(
     val wordmarkAlpha = if (isIgnitionActive) 0f else 1f
 
     val isAmoled = LocalAmoledMode.current
+    val uiBlurEnabled = com.euthopiar.ui.theme.LocalUiBlurEnabled.current
     val barBg = if (isAmoled) Color.Black else Background
 
-    val isUsingHaze = hazeState != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val isUsingHaze = uiBlurEnabled && hazeState != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
 
     Box(
         modifier = modifier
@@ -137,16 +139,16 @@ fun TopHeaderBar(
                         Modifier.hazeEffect(state = hazeState!!) {
                             blurRadius = GlassDefaults.BlurRadius
                             tints = listOf(
-                                HazeTint(barBg.copy(alpha = 0.88f)),
-                                HazeTint(Color.White.copy(alpha = 0.05f))
+                                HazeTint(barBg.copy(alpha = 0.56f)),
+                                HazeTint(Color.White.copy(alpha = 0.06f))
                             )
                             noiseFactor = GlassDefaults.NoiseFactor
                             fallbackTint = HazeTint(GlassDefaults.NavbarFallbackColor)
                         }
                     } else {
                         Modifier
-                            .background(barBg.copy(alpha = 0.88f))
-                            .background(Color.White.copy(alpha = 0.05f))
+                            .background(barBg.copy(alpha = 0.90f))
+                            .background(Color.White.copy(alpha = 0.04f))
                     }
                 )
                 .drawBehind {
@@ -182,8 +184,11 @@ fun TopHeaderBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .height(56.dp)
-                .padding(horizontal = 16.dp),
+                .height(if (windowDimensions.isCompactHeight) 48.dp else 56.dp)
+                .adaptiveHorizontalSafePadding(
+                    baseStart = windowDimensions.horizontalMargin,
+                    baseEnd = windowDimensions.horizontalMargin
+                ),
             contentAlignment = Alignment.Center
         ) {
             Row(

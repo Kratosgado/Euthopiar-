@@ -84,11 +84,14 @@ import com.euthopiar.data.common.DonationConfig
 import com.euthopiar.ui.components.tvFocusable
 import com.euthopiar.ui.settings.components.SettingsTokens
 import com.euthopiar.ui.settings.components.settingsPressable
+import androidx.compose.foundation.layout.widthIn
 import com.euthopiar.ui.theme.Accent
 import com.euthopiar.ui.theme.AppFontFamily
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarGlassTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -286,6 +289,8 @@ fun SupportEuthopiarSheet(
         }
     }
 
+    val uiBlurEnabled = com.euthopiar.ui.theme.LocalUiBlurEnabled.current
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -307,6 +312,8 @@ fun SupportEuthopiarSheet(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .adaptiveHorizontalSafePadding(includeRailClearance = false)
+                .widthIn(max = Dimens.maxSheetWidth)
                 .fillMaxWidth()
                 .heightIn(max = maxSheetHeight)
                 .onGloballyPositioned { coordinates ->
@@ -324,7 +331,7 @@ fun SupportEuthopiarSheet(
                 )
                 .clip(sheetShape)
                 .then(
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && hazeState != null) {
+                    if (uiBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && hazeState != null) {
                         Modifier.hazeEffect(state = hazeState) {
                             blurRadius = EuthopiarGlassTokens.BlurRadius
                             tints = listOf(HazeTint(sheetFill))

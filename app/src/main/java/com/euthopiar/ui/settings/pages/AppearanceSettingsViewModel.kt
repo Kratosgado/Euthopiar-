@@ -39,6 +39,9 @@ class AppearanceSettingsViewModel(application: Application) : AndroidViewModel(a
     private val _amoledMode = kotlinx.coroutines.flow.MutableStateFlow(true)
     val amoledMode: StateFlow<Boolean> = _amoledMode
 
+    private val _uiBlurEnabled = kotlinx.coroutines.flow.MutableStateFlow(true)
+    val uiBlurEnabled: StateFlow<Boolean> = _uiBlurEnabled
+
     init {
         viewModelScope.launch {
             prefs.contentRegionPreset.collect { _contentRegionPreset.value = it }
@@ -63,6 +66,9 @@ class AppearanceSettingsViewModel(application: Application) : AndroidViewModel(a
         }
         viewModelScope.launch {
             prefs.amoledMode.collect { _amoledMode.value = it }
+        }
+        viewModelScope.launch {
+            prefs.uiBlurEnabled.collect { _uiBlurEnabled.value = it }
         }
     }
 
@@ -106,6 +112,11 @@ class AppearanceSettingsViewModel(application: Application) : AndroidViewModel(a
         viewModelScope.launch { prefs.setAmoledMode(enabled) }
     }
 
+    fun setUiBlurEnabled(enabled: Boolean) {
+        _uiBlurEnabled.value = enabled
+        viewModelScope.launch { prefs.setUiBlurEnabled(enabled) }
+    }
+
     fun resetDefaults() {
         setContentRegionPreset(ContentRegionPreset.GLOBAL)
         setNavbarStyle(NavbarStyle.FLOATING)
@@ -113,6 +124,7 @@ class AppearanceSettingsViewModel(application: Application) : AndroidViewModel(a
         setSectionLabelStyle(SectionLabelStyle.AccentBar)
         setTop10Style(Top10Style.PosterTinted)
         setLongPressStyle(LongPressSheetStyle.HERO_PEEK)
+        setUiBlurEnabled(true)
         setReduceMotion(false)
         setAmoledMode(true)
     }

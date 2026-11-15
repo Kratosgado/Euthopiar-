@@ -31,6 +31,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -66,9 +69,11 @@ import androidx.compose.ui.zIndex
 import com.euthopiar.data.repository.Playlist
 import com.euthopiar.ui.navigation.LocalNavbarVisible
 import com.euthopiar.ui.theme.AppFontFamily
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarGlassTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -208,6 +213,8 @@ fun CreatePlaylistDialog(
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
+                .adaptiveHorizontalSafePadding(includeRailClearance = false)
+                .widthIn(max = Dimens.maxSheetWidth)
                 .fillMaxWidth()
                 .heightIn(max = maxSheetHeight)
                 .onGloballyPositioned { coordinates ->
@@ -269,6 +276,7 @@ fun CreatePlaylistDialog(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
                     .navigationBarsPadding()
                     .imePadding()
                     .padding(horizontal = 20.dp)

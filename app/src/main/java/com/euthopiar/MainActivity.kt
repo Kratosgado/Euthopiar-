@@ -132,10 +132,9 @@ class MainActivity : ComponentActivity() {
             com.euthopiar.ui.splash.AppLaunchCoordinator.reset()
         }
 
-        // Automatic background reconciliation for Trakt, Simkl & Supabase Cloud
+        // Automatic background reconciliation for Trakt & Simkl (Supabase pulls in onResume with cooldown)
         lifecycleScope.launch(Dispatchers.IO) {
             com.euthopiar.data.sync.MediaSyncManager.getInstance(applicationContext).syncAll()
-            com.euthopiar.data.sync.supabase.SupabaseSyncManager.getInstance(applicationContext).syncAll()
         }
         setContent {
             EuthopiarTheme {

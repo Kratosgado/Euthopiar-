@@ -1,16 +1,12 @@
-name: Euthopiar Production Release
+name: Euthopiar CI Release Check (Manual)
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_dispatch:
 
 jobs:
-  build-release:
-    name: Build & Publish Release APK
+  verify-compile:
+    name: Verify Clean Open-Source Compile
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
 
     steps:
       - name: Checkout Repository
@@ -31,15 +27,5 @@ jobs:
       - name: Verify Unit Tests Pass
         run: ./gradlew testDebugUnitTest --no-daemon
 
-      - name: Build Universal Release APK
+      - name: Verify Clean Release Compile
         run: ./gradlew assembleRelease --no-daemon
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          name: Euthopiar ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-          files: |
-            app/build/outputs/apk/release/*.apk

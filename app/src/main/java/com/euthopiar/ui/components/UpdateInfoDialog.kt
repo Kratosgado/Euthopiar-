@@ -58,6 +58,8 @@ import com.euthopiar.ui.settings.components.settingsPressable
 import com.euthopiar.ui.theme.AppFontFamily
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
+import com.euthopiar.ui.theme.rememberWindowDimensions
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
@@ -381,8 +383,9 @@ fun UpdateInfoDialog(
     val cardAlpha = if (reduceMotion) 1f else animValue.coerceIn(0f, 1f)
 
     val cardShape = RoundedCornerShape(28.dp)
-    val cardFill = if (isAmoled) Color.Black.copy(alpha = 0.92f) else Color(0xFF0F1219).copy(alpha = 0.85f)
-    val fallbackColor = if (isAmoled) Color.Black.copy(alpha = 0.96f) else Color(0xFF0F1219).copy(alpha = 0.96f)
+    val uiBlurEnabled = com.euthopiar.ui.theme.LocalUiBlurEnabled.current
+    val cardFill = com.euthopiar.ui.theme.EuthopiarGlassTokens.cardFill(isAmoled)
+    val fallbackColor = com.euthopiar.ui.theme.EuthopiarGlassTokens.fallbackFill(isAmoled)
 
     val isDownloading = downloadState is ApkDownloadState.Downloading
     val isReadyToInstall = downloadState is ApkDownloadState.ReadyToInstall
@@ -414,10 +417,10 @@ fun UpdateInfoDialog(
                     translationY = cardTranslationY
                     alpha = cardAlpha
                 }
-                .widthIn(max = 400.dp)
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false)
+                .widthIn(max = if (rememberWindowDimensions().isWideViewport) 520.dp else 400.dp)
                 .fillMaxWidth()
-                .fillMaxHeight(0.80f)
-                .padding(horizontal = 20.dp)
+                .fillMaxHeight(if (rememberWindowDimensions().isCompactHeight) 0.90f else 0.80f)
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,
@@ -425,7 +428,7 @@ fun UpdateInfoDialog(
                 )
                 .clip(cardShape)
                 .then(
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && hazeState != null) {
+                    if (uiBlurEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && hazeState != null) {
                         Modifier.hazeEffect(state = hazeState) {
                             blurRadius = 24.dp
                             tints = listOf(HazeTint(cardFill))

@@ -85,9 +85,12 @@ import com.euthopiar.ui.settings.models.isVisibleFor
 import com.euthopiar.ui.settings.search.SettingsSearchBar
 import com.euthopiar.ui.settings.search.getAllSettingsSearchEntries
 import com.euthopiar.ui.theme.AppFontFamily
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarMotionTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
+import com.euthopiar.ui.theme.LocalNavigationLayout
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.rememberCenteredContentPadding
 import kotlinx.coroutines.delay
 
 @Composable
@@ -145,8 +148,13 @@ fun SettingsRootScreen(
     // Measured FloatingNavbar spacing:
     // FloatingNavbar pill height = 70.dp + vertical padding = 24.dp (94.dp total container height).
     // Plus system navigation bars inset + 24.dp breathing clearance.
+    val navLayout = LocalNavigationLayout.current
     val navBarBottomInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    val listBottomPadding = 94.dp + 24.dp + navBarBottomInset
+    val listBottomPadding = if (navLayout.hasBottomNav) {
+        94.dp + 24.dp + navBarBottomInset
+    } else {
+        24.dp + navBarBottomInset
+    }
 
     Box(
         modifier = modifier
@@ -171,12 +179,13 @@ fun SettingsRootScreen(
                 } else Modifier
             )
     ) {
+        val centeredPadding = rememberCenteredContentPadding(
+            maxContentWidth = Dimens.maxContentWidth,
+            bottom = listBottomPadding
+        )
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(
-                top = 0.dp,
-                bottom = listBottomPadding
-            )
+            contentPadding = centeredPadding
         ) {
             // 1. Headline "Settings" (38 sp, medium, lineHeight 1.0, letterSpacing slightly negative, 20 dp side margin)
             item(key = "header_title") {

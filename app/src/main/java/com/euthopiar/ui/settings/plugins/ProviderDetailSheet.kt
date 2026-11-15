@@ -38,7 +38,12 @@ import androidx.compose.ui.unit.sp
 import com.euthopiar.core.model.PluginManifest
 import com.euthopiar.ui.settings.PluginManagerViewModel
 import com.euthopiar.ui.theme.AppFontFamily
+import com.euthopiar.ui.theme.ApplyWindowBlurEffect
+import com.euthopiar.ui.theme.Dimens
+import com.euthopiar.ui.theme.EuthopiarGlassTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
+import com.euthopiar.ui.theme.LocalUiBlurEnabled
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 
 /**
  * Screen 3: Provider Detail Bottom Sheet.
@@ -61,6 +66,7 @@ fun ProviderDetailSheet(
 ) {
     val haptic = LocalHapticFeedback.current
     val isAmoled = LocalAmoledMode.current
+    val uiBlurEnabled = LocalUiBlurEnabled.current
     val context = LocalContext.current
     val isLowEnd = remember(context) { context.isLowEndDevice() }
 
@@ -68,15 +74,15 @@ fun ProviderDetailSheet(
     var isDescriptionExpanded by remember { mutableStateOf(false) }
     var showUninstallConfirm by remember { mutableStateOf(false) }
 
-    val containerBg = when {
-        isLowEnd -> PluginsGlassTokens.SheetGlassFallback
-        isAmoled -> PluginsGlassTokens.SheetGlassAmoledFill
-        else -> PluginsGlassTokens.SheetGlassFill
-    }
+    val containerBg = EuthopiarGlassTokens.sheetWindowFill(
+        isAmoled = isAmoled,
+        blurEnabled = uiBlurEnabled && !isLowEnd
+    )
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
+        sheetMaxWidth = Dimens.maxSheetWidth,
         shape = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp, bottomStart = 0.dp, bottomEnd = 0.dp),
         containerColor = containerBg,
         scrimColor = Color.Black.copy(alpha = 0.65f),
@@ -99,11 +105,13 @@ fun ProviderDetailSheet(
             }
         }
     ) {
+        ApplyWindowBlurEffect(enabled = uiBlurEnabled && !isLowEnd)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .navigationBarsPadding()
-                .padding(horizontal = 20.dp, vertical = 8.dp)
+                .adaptiveHorizontalSafePadding(baseStart = 20.dp, baseEnd = 20.dp, includeRailClearance = false)
+                .padding(vertical = 8.dp)
         ) {
             // Scrollable Content
             Column(

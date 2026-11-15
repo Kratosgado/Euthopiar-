@@ -69,10 +69,13 @@ import androidx.compose.ui.window.DialogWindowProvider
 import com.euthopiar.R
 import com.euthopiar.ui.settings.plugins.pluginsPressable
 import com.euthopiar.ui.theme.AppFontFamily
+import com.euthopiar.ui.theme.Dimens
 import com.euthopiar.ui.theme.EuthopiarGlassTokens
 import com.euthopiar.ui.theme.LocalAmoledMode
 import com.euthopiar.ui.theme.LocalReduceMotion
+import com.euthopiar.ui.theme.adaptiveHorizontalSafePadding
 import com.euthopiar.ui.theme.euthopiarGlassCard
+import com.euthopiar.ui.theme.rememberWindowDimensions
 import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 
@@ -187,11 +190,13 @@ fun TraktConnectDialog(
             contentAlignment = Alignment.Center
         ) {
             // Dialog Card
+            val windowDims = rememberWindowDimensions()
             Box(
                 modifier = Modifier
+                    .adaptiveHorizontalSafePadding(baseStart = 16.dp, baseEnd = 16.dp, includeRailClearance = false)
                     .widthIn(max = 410.dp)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .heightIn(max = windowDims.dialogMaxHeight())
                     .imePadding()
                     .graphicsLayer {
                         scaleX = cardScale
@@ -784,11 +789,13 @@ fun SimklConnectDialog(
             contentAlignment = Alignment.Center
         ) {
             // Dialog Card
+            val windowDims = rememberWindowDimensions()
             Box(
                 modifier = Modifier
+                    .adaptiveHorizontalSafePadding(baseStart = 16.dp, baseEnd = 16.dp, includeRailClearance = false)
                     .widthIn(max = 410.dp)
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .heightIn(max = windowDims.dialogMaxHeight())
                     .imePadding()
                     .graphicsLayer {
                         scaleX = cardScale
